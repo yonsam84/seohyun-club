@@ -3,10 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2026 서현클럽 회원명단</title>
+  <title>서현클럽</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+
+  <!-- 홈 화면 아이콘 (인라인 SVG → data URI) -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjMWE1YzM4Ii8+PHRleHQgeD0iNjQiIHk9IjUyIiBmb250LXNpemU9IjQ4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5K4PC90ZXh0Pjx0ZXh0IHg9IjY0IiB5PSI5NSIgZm9udC1zaXplPSIyMiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiPuyduOtlmTwvdGV4dD48L3N2Zz4=">
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjMWE1YzM4Ii8+PHRleHQgeD0iNjQiIHk9IjUyIiBmb250LXNpemU9IjQ4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5K4PC90ZXh0Pjx0ZXh0IHg9IjY0IiB5PSI5NSIgZm9udC1zaXplPSIyMiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiPuyduOtlmTwvdGV4dD48L3N2Zz4=">
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #f5f5f3;
@@ -14,9 +20,88 @@
       min-height: 100vh;
       padding: 2rem 1rem;
     }
+
+    /* ── 로딩 스크린 ── */
+    #loader {
+      position: fixed; inset: 0;
+      background: #1a5c38;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 20px; z-index: 999;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #loader.hide { opacity: 0; visibility: hidden; }
+
+    .shuttle-wrap {
+      position: relative; width: 100px; height: 100px;
+    }
+    .shuttle-svg {
+      width: 100px; height: 100px;
+      animation: floatShuttle 1.8s ease-in-out infinite;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.35));
+    }
+    @keyframes floatShuttle {
+      0%,100% { transform: translateY(0) rotate(-15deg); }
+      50%      { transform: translateY(-16px) rotate(5deg); }
+    }
+
+    .trail {
+      position: absolute; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 40px; height: 10px;
+      background: radial-gradient(ellipse, rgba(255,255,255,0.25) 0%, transparent 70%);
+      animation: trailPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes trailPulse {
+      0%,100% { opacity: 0.8; transform: translateX(-50%) scaleX(1); }
+      50%      { opacity: 0.2; transform: translateX(-50%) scaleX(0.5); }
+    }
+
+    .loader-text {
+      color: #fff;
+      font-size: 28px; font-weight: 700;
+      letter-spacing: 0.08em;
+      animation: fadeInText 0.8s ease forwards;
+      opacity: 0;
+    }
+    .loader-sub {
+      color: rgba(255,255,255,0.6);
+      font-size: 13px; letter-spacing: 0.12em;
+      animation: fadeInText 0.8s 0.3s ease forwards;
+      opacity: 0;
+    }
+    @keyframes fadeInText {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .loader-dots {
+      display: flex; gap: 8px; margin-top: 8px;
+    }
+    .loader-dots span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      animation: dotBounce 1.2s infinite;
+    }
+    .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dotBounce {
+      0%,80%,100% { transform: scale(0.6); opacity: 0.4; }
+      40%          { transform: scale(1.2); opacity: 1; }
+    }
+
+    /* ── 메인 콘텐츠 ── */
+    #app { opacity: 0; transition: opacity 0.5s ease; }
+    #app.show { opacity: 1; }
+
     .container { max-width: 820px; margin: 0 auto; }
-    .header { margin-bottom: 1.5rem; }
-    .header h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+    .header { margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px; }
+    .header-icon {
+      width: 44px; height: 44px; background: #1a5c38;
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+    .header h1 { font-size: 20px; font-weight: 600; margin-bottom: 2px; }
     .header p { font-size: 13px; color: #666; }
 
     .search-row { display: flex; gap: 8px; align-items: center; margin-bottom: 1.25rem; }
@@ -27,7 +112,7 @@
       font-size: 14px; background: #fff; outline: none;
       transition: border-color 0.15s;
     }
-    .search-wrap input:focus { border-color: #888; }
+    .search-wrap input:focus { border-color: #1a5c38; }
     .search-wrap .ti {
       position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
       font-size: 16px; color: #999; pointer-events: none;
@@ -57,9 +142,9 @@
     }
     .badge-btn:hover { border-color: #aaa; color: #1a1a1a; }
 
-    .active-all   { background: #2c2c2a !important; color: #f5f5f0 !important; border-color: #2c2c2a !important; font-weight: 500 !important; }
-    .active-gender{ background: #185fa5 !important; color: #e6f1fb !important; border-color: #185fa5 !important; font-weight: 500 !important; }
-    .active-age   { background: #3b6d11 !important; color: #eaf3de !important; border-color: #3b6d11 !important; font-weight: 500 !important; }
+    .active-all    { background: #1a5c38 !important; color: #fff !important; border-color: #1a5c38 !important; font-weight: 500 !important; }
+    .active-gender { background: #185fa5 !important; color: #e6f1fb !important; border-color: #185fa5 !important; font-weight: 500 !important; }
+    .active-age    { background: #3b6d11 !important; color: #eaf3de !important; border-color: #3b6d11 !important; font-weight: 500 !important; }
     .active-grade-A{ background: #3b6d11 !important; color: #eaf3de !important; border-color: #3b6d11 !important; font-weight: 500 !important; }
     .active-grade-B{ background: #185fa5 !important; color: #e6f1fb !important; border-color: #185fa5 !important; font-weight: 500 !important; }
     .active-grade-C{ background: #854f0b !important; color: #faeeda !important; border-color: #854f0b !important; font-weight: 500 !important; }
@@ -97,60 +182,96 @@
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <h1>2026 서현클럽 회원명단</h1>
-    <p>성명, 성별, 연형, 급수로 다중 필터링</p>
-  </div>
 
-  <div class="search-row">
-    <div class="search-wrap">
-      <i class="ti ti-search"></i>
-      <input type="text" id="nameSearch" placeholder="이름으로 검색..." oninput="render()">
-    </div>
-    <button class="reset-btn" onclick="resetAll()">
-      <i class="ti ti-refresh"></i> 초기화
-    </button>
+<!-- 로딩 스크린 -->
+<div id="loader">
+  <div class="shuttle-wrap">
+    <svg class="shuttle-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- 코르크 -->
+      <ellipse cx="50" cy="78" rx="12" ry="9" fill="#f5deb3" stroke="#c8a87a" stroke-width="1.5"/>
+      <ellipse cx="50" cy="72" rx="10" ry="6" fill="#e8c98a"/>
+      <!-- 깃털 줄기들 -->
+      <line x1="50" y1="70" x2="32" y2="22" stroke="white" stroke-width="1.2" opacity="0.9"/>
+      <line x1="50" y1="70" x2="38" y2="18" stroke="white" stroke-width="1.2" opacity="0.9"/>
+      <line x1="50" y1="70" x2="45" y2="16" stroke="white" stroke-width="1.2" opacity="0.9"/>
+      <line x1="50" y1="70" x2="52" y2="16" stroke="white" stroke-width="1.2" opacity="0.9"/>
+      <line x1="50" y1="70" x2="59" y2="18" stroke="white" stroke-width="1.2" opacity="0.9"/>
+      <line x1="50" y1="70" x2="65" y2="22" stroke="white" stroke-width="1.2" opacity="0.9"/>
+      <line x1="50" y1="70" x2="70" y2="28" stroke="white" stroke-width="1.2" opacity="0.85"/>
+      <!-- 깃털 상단 링 -->
+      <ellipse cx="50" cy="22" rx="20" ry="7" fill="none" stroke="white" stroke-width="1.8" opacity="0.95"/>
+      <!-- 깃털 안쪽 링 -->
+      <ellipse cx="50" cy="30" rx="16" ry="5" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+    </svg>
+    <div class="trail"></div>
   </div>
-
-  <div class="filter-panel">
-    <div class="filter-group">
-      <div class="filter-label">성별</div>
-      <div class="filter-row" id="genderBtns"></div>
-    </div>
-    <div class="divider"></div>
-    <div class="filter-group">
-      <div class="filter-label">연형</div>
-      <div class="filter-row" id="ageBtns"></div>
-    </div>
-    <div class="divider"></div>
-    <div class="filter-group">
-      <div class="filter-label">급수</div>
-      <div class="filter-row" id="gradeBtns"></div>
-    </div>
+  <div class="loader-text">서현클럽</div>
+  <div class="loader-sub">2026 회원명단</div>
+  <div class="loader-dots">
+    <span></span><span></span><span></span>
   </div>
+</div>
 
-  <div class="stat-row">
-    <div class="stat-card"><div class="stat-label">검색 결과</div><div class="stat-val" id="statTotal">0</div></div>
-    <div class="stat-card"><div class="stat-label">남성</div><div class="stat-val" id="statM">0</div></div>
-    <div class="stat-card"><div class="stat-label">여성</div><div class="stat-val" id="statF">0</div></div>
-    <div class="stat-card"><div class="stat-label">전체 인원</div><div class="stat-val">85</div></div>
-  </div>
+<!-- 메인 앱 -->
+<div id="app">
+  <div class="container">
+    <div class="header">
+      <div class="header-icon">🏸</div>
+      <div>
+        <h1>2026 서현클럽 회원명단</h1>
+        <p>성명, 성별, 연형, 급수로 다중 필터링</p>
+      </div>
+    </div>
 
-  <div class="tbl-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th onclick="sortBy('no')" style="width:60px">순번 <span id="sort-no"></span></th>
-          <th onclick="sortBy('name')">성명 <span id="sort-name"></span></th>
-          <th onclick="sortBy('gender')">성별 <span id="sort-gender"></span></th>
-          <th onclick="sortBy('age')">연형 <span id="sort-age"></span></th>
-          <th onclick="sortBy('grade')">급수 <span id="sort-grade"></span></th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
-    <div class="empty" id="emptyMsg" style="display:none">검색 결과가 없습니다.</div>
+    <div class="search-row">
+      <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input type="text" id="nameSearch" placeholder="이름으로 검색..." oninput="render()">
+      </div>
+      <button class="reset-btn" onclick="resetAll()">
+        <i class="ti ti-refresh"></i> 초기화
+      </button>
+    </div>
+
+    <div class="filter-panel">
+      <div class="filter-group">
+        <div class="filter-label">성별</div>
+        <div class="filter-row" id="genderBtns"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="filter-group">
+        <div class="filter-label">연형</div>
+        <div class="filter-row" id="ageBtns"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="filter-group">
+        <div class="filter-label">급수</div>
+        <div class="filter-row" id="gradeBtns"></div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-label">검색 결과</div><div class="stat-val" id="statTotal">0</div></div>
+      <div class="stat-card"><div class="stat-label">남성</div><div class="stat-val" id="statM">0</div></div>
+      <div class="stat-card"><div class="stat-label">여성</div><div class="stat-val" id="statF">0</div></div>
+      <div class="stat-card"><div class="stat-label">전체 인원</div><div class="stat-val">85</div></div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortBy('no')" style="width:60px">순번 <span id="sort-no"></span></th>
+            <th onclick="sortBy('name')">성명 <span id="sort-name"></span></th>
+            <th onclick="sortBy('gender')">성별 <span id="sort-gender"></span></th>
+            <th onclick="sortBy('age')">연형 <span id="sort-age"></span></th>
+            <th onclick="sortBy('grade')">급수 <span id="sort-grade"></span></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty" id="emptyMsg" style="display:none">검색 결과가 없습니다.</div>
+    </div>
   </div>
 </div>
 
@@ -159,7 +280,7 @@ const members = [
   {no:1,name:'강규재',gender:'남',age:40,grade:'C'},{no:2,name:'강다현',gender:'여',age:30,grade:'C'},
   {no:3,name:'강석준',gender:'남',age:30,grade:'B'},{no:4,name:'강성록',gender:'남',age:60,grade:'A'},
   {no:5,name:'강승호',gender:'남',age:40,grade:'D'},{no:6,name:'곽도현',gender:'남',age:20,grade:'B'},
-  {no:7,name:'곽태훈',gender:'남',age:50,grade:'B'},{no:8,name:'권혜린',gender:'여',age:20,grade:'D'},
+  {no:7,name:'곽래훈',gender:'남',age:50,grade:'B'},{no:8,name:'권혜린',gender:'여',age:20,grade:'D'},
   {no:9,name:'김경원',gender:'남',age:30,grade:'B'},{no:10,name:'김교신',gender:'남',age:30,grade:'E'},
   {no:11,name:'김권일',gender:'남',age:40,grade:'C'},{no:12,name:'김근수',gender:'남',age:40,grade:'A'},
   {no:13,name:'김동욱',gender:'남',age:30,grade:'C'},{no:14,name:'김동진',gender:'남',age:50,grade:'A'},
@@ -170,12 +291,12 @@ const members = [
   {no:23,name:'김혜인',gender:'여',age:30,grade:'E'},{no:24,name:'박건우',gender:'남',age:20,grade:'C'},
   {no:25,name:'박덕수',gender:'남',age:60,grade:'A'},{no:26,name:'박영미',gender:'여',age:50,grade:'C'},
   {no:27,name:'박재현',gender:'남',age:30,grade:'C'},{no:28,name:'박종대',gender:'남',age:40,grade:'B'},
-  {no:29,name:'박종욱',gender:'남',age:40,grade:'D'},{no:30,name:'박순이',gender:'여',age:40,grade:'E'},
+  {no:29,name:'박종욱',gender:'남',age:40,grade:'D'},{no:30,name:'박준이',gender:'여',age:40,grade:'E'},
   {no:31,name:'박진홍',gender:'남',age:30,grade:'D'},{no:32,name:'방민정',gender:'여',age:40,grade:'E'},
   {no:33,name:'변지영',gender:'여',age:30,grade:'B'},{no:34,name:'서영우',gender:'남',age:50,grade:'E'},
   {no:35,name:'서윤성',gender:'남',age:30,grade:'C'},{no:36,name:'손승환',gender:'남',age:40,grade:'B'},
   {no:37,name:'손우리',gender:'여',age:30,grade:'D'},{no:38,name:'송은근',gender:'남',age:60,grade:'A'},
-  {no:39,name:'송창설',gender:'남',age:30,grade:'D'},{no:40,name:'신동길',gender:'남',age:50,grade:'E'},
+  {no:39,name:'송창섭',gender:'남',age:30,grade:'D'},{no:40,name:'신동길',gender:'남',age:50,grade:'E'},
   {no:41,name:'신동인',gender:'남',age:30,grade:'C'},{no:42,name:'신아린',gender:'여',age:40,grade:'B'},
   {no:43,name:'신용준',gender:'남',age:40,grade:'E'},{no:44,name:'신혜성',gender:'여',age:60,grade:'E'},
   {no:45,name:'심하정',gender:'여',age:30,grade:'C'},{no:46,name:'안수정',gender:'여',age:30,grade:'C'},
@@ -191,13 +312,13 @@ const members = [
   {no:65,name:'이진우',gender:'남',age:50,grade:'D'},{no:66,name:'임석원',gender:'남',age:50,grade:'E'},
   {no:67,name:'임재명',gender:'남',age:50,grade:'A'},{no:68,name:'장석기',gender:'남',age:40,grade:'E'},
   {no:69,name:'전규완',gender:'남',age:30,grade:'B'},{no:70,name:'전상현',gender:'남',age:40,grade:'E'},
-  {no:71,name:'전연경',gender:'여',age:30,grade:'D'},{no:72,name:'전지경',gender:'여',age:40,grade:'E'},
+  {no:71,name:'전연경',gender:'여',age:30,grade:'D'},{no:72,name:'전자경',gender:'여',age:40,grade:'E'},
   {no:73,name:'정민지',gender:'여',age:30,grade:'C'},{no:74,name:'정연우',gender:'여',age:30,grade:'D'},
-  {no:75,name:'정영춘',gender:'남',age:30,grade:'A'},{no:76,name:'정윤덕',gender:'남',age:30,grade:'D'},
+  {no:75,name:'정영준',gender:'남',age:30,grade:'A'},{no:76,name:'정윤덕',gender:'남',age:30,grade:'D'},
   {no:77,name:'정인혁',gender:'남',age:30,grade:'E'},{no:78,name:'조영찬',gender:'남',age:30,grade:'C'},
   {no:79,name:'최경희',gender:'여',age:60,grade:'A'},{no:80,name:'최보임',gender:'여',age:30,grade:'D'},
-  {no:81,name:'최소현',gender:'여',age:50,grade:'A'},{no:82,name:'탁규현',gender:'남',age:30,grade:'A'},
-  {no:83,name:'황우이',gender:'남',age:60,grade:'A'},{no:84,name:'황현석',gender:'남',age:40,grade:'B'},
+  {no:81,name:'최조현',gender:'여',age:50,grade:'A'},{no:82,name:'탁규현',gender:'남',age:30,grade:'A'},
+  {no:83,name:'황운이',gender:'남',age:60,grade:'A'},{no:84,name:'황현석',gender:'남',age:40,grade:'B'},
   {no:85,name:'김병근',gender:'남',age:40,grade:'B'}
 ];
 
@@ -282,8 +403,15 @@ function resetAll(){
   initFilters(); render();
 }
 
-initFilters();
-render();
+// 로딩 후 앱 표시
+window.addEventListener('load', ()=>{
+  initFilters();
+  render();
+  setTimeout(()=>{
+    document.getElementById('loader').classList.add('hide');
+    document.getElementById('app').classList.add('show');
+  }, 2200);
+});
 </script>
 </body>
 </html>
